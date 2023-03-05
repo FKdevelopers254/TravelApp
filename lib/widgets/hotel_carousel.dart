@@ -1,0 +1,627 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import '../hoteladmin/ai.dart';
+import '../hoteladmin/edithotel.dart';
+import '../hoteladmin/homescreen.dart';
+import '../screens/hotel_screen.dart';
+import '../screens/ptv.dart';
+import '../screens/test.dart';
+import 'hotel_tab.dart';
+import 'package:eastravel/widgets/bottom_bar.dart';
+
+
+class HotelCarousel extends StatefulWidget {
+
+
+  int likeCount = 0;
+  final user = FirebaseAuth.instance.currentUser;
+  final List<Map<String, String>> hotels =  [
+    {
+
+      'imageUrl': 'assets/images/radissonblu.jpg',
+      'imageUrl2': 'assets/images/radissonblu.jpg',
+      'imageUrl3': 'assets/images/radissonblu.jpg',
+      'name': 'Radisson Blu Hotel',
+      'address': 'Nairobi,Kenya',
+      'price': '175',
+      'wifi': 'Available',
+      'parking': 'Available',
+      'balcony': 'Available',
+      'heating': 'Available',
+      'spa': 'Available',
+      'fitness': 'Available',
+      'bar': 'Available',
+      'swimmingpool': 'Available',
+      'restaurant': 'Available',
+
+
+      'description': 'Located in centre of Nairobi and neighboring the Statehouse, the hotel and residence is set in the nature of Nairobi Arboretum offerings complimentary access to the city’s nature park for jogging, or walks Radisson Blu Hotel & Residence Nairobi Arboretum offers accommodation with each room having a private balcony access, where guests can enjoy views of the pool or the Arboretum Flora. Each unit has a flat screen TV with cable channels. The rooms are complete with a private bathroom with a rain shower. The 5-star hotel provides bathroom amenities. Turndown service are also available at the hotel. Guest can relax in the treatment rooms, steam room, sauna and the heated swimming pool. Guests can make use of the complimentary WiFi and on-site private parking at the property. Continental and super breakfast options are available every morning at The Fire Lake and Grill House an all-day dining outlet that specializes in American grilled cuisine with an African touch. The hotel also has The Arborista Coffee Lounge a cafe with a grab and go concept with a wide range of teas. The staff at the 24-hour front desk are available. The property also boasts a fully equipped 24-hour gym. Kenyatta International Conference Centre is 3.6 km from Radisson Blu Hotel Nairobi, while Nairobi National Museum is 2.6 km away. The nearest airport is Wilson Airport, 7.4 km from the hotel. Couples particularly like the location — they rated it 9.0 for a two-person trip. Radisson Blu Hotel & Residence Nairobi Arboretum has been welcoming Booking.com guests since 4 Sept 2019. Hotel chain/brand: Radisson Blu',
+      'room1name':'Twin Room with Shared Bathroom',
+      'room1photo':'assets/images/radissonblu.jpg',
+      'room1type':'1 twin bed and 1 queen bed',
+      'room1price':'50',
+      'room1desc':'assets/images/radissonblu.jpg',
+      'room2name':'Three-Bedroom Apartment',
+      'room2photo':'assets/images/radissonblu.jpg',
+      'room2type':'1 queen bed',
+      'room2price':'60',
+      'room2desc':'assets/images/radissonblu.jpg',
+      'room3name':'Twin Room with Shared Bathroom',
+      'room3photo':'assets/images/radissonblu.jpg',
+      'room3type':'1 twin bed',
+      'room3price':'70',
+      'room3desc':'assets/images/radissonblu.jpg',
+    },
+    {
+
+      'imageUrl': 'assets/images/kenyacomfort3.jpg',
+      'imageUrl2': 'assets/images/radissonblu.jpg',
+      'imageUrl3': 'assets/images/radissonblu.jpg',
+      'name': 'Kenya Comfort Suites',
+      'address': 'Nairobi,Kenya',
+      'price': '300',
+      'description': 'Set in Nairobi, 2.7 km from Kenyatta International Conference Centre, Kenya Comfort Suites offers accommodation with a restaurant, free private parking, an outdoor swimming pool and a bar. With free WiFi, this 3-star hotel has a shared lounge and a garden. The accommodation features a 24-hour front desk, room service and currency exchange for guests. The hotel offers a continental or buffet breakfast. Kenya Comfort Suites offers a childrens playground. Popular points of interest near the accommodation include Nairobi Gallery, Central Park and Nairobi Arboretum. The nearest airport is Wilson Airport, 5 km from Kenya Comfort Suites. Kenya Comfort Suites has been welcoming Booking.com guests since 13 Mar 2014. Distance in property description is calculated using © OpenStreetMap Most popular facilities 1 swimming pool Airport shuttle Non-smoking rooms Spa and wellness centre Room service Restaurant Free parking Bar Breakfast Currency exchange: Need local currency? This property offers currency exchange on site',
+      'room1name':'Classic Studio Apartment with Extra Bed',
+      'room1photo':'assets/images/radissonblu.jpg',
+      'room1type':'1 twin bed',
+      'room1price':'20',
+      'room1desc':'assets/images/radissonblu.jpg',
+      'room2name':'Comfort Studio Apartment with Balcony',
+      'room2photo':'assets/images/radissonblu.jpg',
+      'room2type':'1 queen bed',
+      'room2price':'30',
+      'room2desc':'assets/images/radissonblu.jpg',
+      'room3name':'Apartment (8 Adults)',
+      'room3photo':'assets/images/radissonblu.jpg',
+      'room3type':'1 twin bed and 1 queen bed',
+      'room3price':'40',
+      'room3desc':'assets/images/radissonblu.jpg',
+    },
+    {
+
+      'imageUrl': 'assets/images/olesereni.jpg',
+      'imageUrl2': 'assets/images/radissonblu.jpg',
+      'imageUrl3': 'assets/images/radissonblu.jpg',
+      'name': 'Ole Sereni-Nairobi ',
+      'address': 'Nairobi,Kenya',
+      'price': '140',
+      'description': 'Overlooking the Nairobi National Park, Ole-Sereni features an outdoor pool, 2 restaurants and a snack bar. The hotels health club offers aerobics, steam, sauna, massage facilities and a salon. Ole-Sereni Hotel is decorated with the typical style of a safari lodge, including bright colours, wooden details and artwork in raw materials. The contemporary rooms come with wall-mounted flat-screen TVs, free WiFi and a small coffee table. In the bathrooms, black marble combines with large shower boxes, and bathrobes and slippers are available upon request. The main restaurant has a large deck where you can spot wildlife. It offers grills, Italian, Indian and Oriental cuisine. Evening entertainment and steaks can be enjoyed at Eagles, which offers views of the National Park and Nairobis skyline. The Waterhole Snack Bar offers light meals and snacks. Ole-Sereni is a 10-minute drive from the Jomo Kenyatta International Airport. Free private parking is available. Couples particularly like the location — they rated it 8.3 for a two-person trip. 254 Ole Sereni-Nairobi Park View has been welcoming Booking.com guests since 2 Aug 2011.',
+      'room1name':'KingSize',
+      'room1photo':'assets/images/radissonblu.jpg',
+      'room1type':'1 twin bed and 1 queen bed',
+      'room1price':'22',
+      'room1desc':'assets/images/radissonblu.jpg',
+      'room2name':'Double',
+      'room2photo':'assets/images/radissonblu.jpg',
+      'room2type':'1 queen bed',
+      'room2price':'32',
+      'room2desc':'assets/images/radissonblu.jpg',
+      'room3name':'Single',
+      'room3photo':'assets/images/radissonblu.jpg',
+      'room3type':'1 queen bed',
+      'room3price':'33',
+      'room3desc':'assets/images/radissonblu.jpg',
+    },
+    {
+
+      'imageUrl': 'assets/images/fourpoints.jpg',
+      'imageUrl2': 'assets/images/radissonblu.jpg',
+      'imageUrl3': 'assets/images/radissonblu.jpg',
+      'name': 'Four Points Sheraton',
+      'address': 'Nairobi,Kenya',
+      'price': '200',
+      'description': 'Set in Nairobi, 6.4 km from Syokimau Railway Station, Four Points by Sheraton Nairobi Airport features an outdoor swimming pool and complimentary on site private parking. The property boasts a spa and wellness centre with a fitness centre and Jacuzzi. The air conditioned units in the hotel are equipped with a flat screen TV with satellite channels, minibar, coffee maker and electric kettle. The rooms are fitted with a seating area. All the units have a shower and toilet and the property provides free toiletries. Guests at Four Points by Sheraton Nairobi Airport can enjoy continental, American, buffet, full English, Irish and vegetarian breakfast options. The property also features an onsite restaurant that specializes in local, American and Asian cuisines. Staff at the 24-hour front desk can provide advice on what to do in the area. The nearest airport Jomo Kenyatta International Airport is situated 800 m from the property. Four Points by Sheraton Nairobi Airport offers airport shuttle services to its guests Couples particularly like the location — they rated it 9.3 for a two-person trip. Four Points by Sheraton Nairobi Airport has been welcoming Booking.com guests since 13 Nov 2017. Hotel chain/brand: Sheraton',
+      'room1name':'KingSize',
+      'room1photo':'assets/images/radissonblu.jpg',
+      'room1type':'1 twin bed and 1 queen bed',
+      'room1price':'60',
+      'room1desc':'assets/images/radissonblu.jpg',
+      'room2name':'Double',
+      'room2photo':'assets/images/radissonblu.jpg',
+      'room2type':'1 twin bed',
+      'room2price':'70',
+      'room2desc':'assets/images/radissonblu.jpg',
+      'room3name':'Single',
+      'room3photo':'assets/images/radissonblu.jpg',
+      'room3type':'1 queen bed',
+      'room3price':'80',
+      'room3desc':'assets/images/radissonblu.jpg',
+    },
+    {
+
+      'imageUrl': 'assets/images/sarovastanley.jpg',
+      'imageUrl2': 'assets/images/radissonblu.jpg',
+      'imageUrl3': 'assets/images/radissonblu.jpg',
+      'name': 'Sarova Stanley',
+      'address': 'Nairobi,Kenya',
+      'price': '540',
+      'description': 'Featuring a pool terrace and 3 restaurants, the hotel Sarova Stanley is located in central Nairobi. It offers a bar, fitness centre, and luxury rooms with free Wi-Fi. Complimentary private parking is also provided. Most of the rooms at the Sarova overlook Nairobi, and all of them are elegantly decorated in classic style. They all have a seating area or separate living room with a satellite TV, and include a private bathroom. The Pool Deck Restaurant is located on the fifth floor and serves al fresco buffet-style meals. The Thorn Tree Café is an open-air, bistro style café, and the Thai Chi offers authentic Thai cuisine. The Stanley Health Club includes a fitness area, a sauna, and a steam bath. Yoga and aerobics lessons are also available upon request. Kenyatta International Conference Centre is just 400 m away, while Jomo Kenyatta International Airport is 18 km away. The Nairobi National Park is 35 minutes away by car. 10-minute drive from Jomo Kenyatta International Airport via the Nairobi Expressway. This is our guests favourite part of Nairobi, according to independent reviews. Couples particularly like the location — they rated it 9.1 for a two-person trip. Sarova Stanley has been welcoming Booking.com guests since 5 Sept 2012.',
+      'room1name':'KingSize',
+      'room1photo':'assets/images/radissonblu.jpg',
+      'room1type':'1 twin bed and 1 queen bed',
+      'room1price':'50',
+      'room1desc':'assets/images/radissonblu.jpg',
+      'room2name':'Double',
+      'room2photo':'assets/images/radissonblu.jpg',
+      'room2type':'1 queen bed',
+      'room2price':'40',
+      'room2desc':'assets/images/radissonblu.jpg',
+      'room3name':'Single',
+      'room3photo':'assets/images/radissonblu.jpg',
+      'room3type':'1 queen bed',
+      'room3price':'20',
+      'room3desc':'assets/images/radissonblu.jpg',
+    },
+    {
+
+      'imageUrl': 'assets/images/kozi3.jpg',
+      'imageUrl2': 'assets/images/radissonblu.jpg',
+      'imageUrl3': 'assets/images/radissonblu.jpg',
+      'name': 'Kozi Suites Nairobi',
+      'address': 'Nairobi,Kenya',
+      'price': '124',
+      'description': 'Located in Nairobi, within 17 km of Kenyatta International Conference Centre and 19 km of Nairobi National Museum, Kozi Suites Nairobi Airport provides accommodation with a bar and free WiFi throughout the property as well as free private parking for guests who drive. Each accommodation at the 4-star hotel has city views, and guests can enjoy access to a terrace. The property is allergy-free and is situated 1.8 km from Nairobi SGR Terminus. All units are equipped with a microwave, fridge, a kettle, a shower, slippers and a wardrobe. Every room comes with a private bathroom and free toiletries, and certain units at the hotel have a balcony. All rooms at Kozi Suites Nairobi Airport are fitted with a seating area. Crown Paints Distributor Jihan Freighters Ltd is 14 km from the accommodation, while Nyayo Stadium is 16 km away. The nearest airport is Jomo Kenyatta International, 8 km from Kozi Suites Nairobi Airport, and the property offers a paid airport shuttle service. Kozi Suites Nairobi Airport has been welcoming Booking.com guests since 10 Mar 2021. Distance in property description is calculated using © OpenStreetMap',
+      'room1name':'KingSize Kizinga',
+      'room1photo':'assets/images/radissonblu.jpg',
+      'room1type':'1 twin bed and 1 queen bed',
+      'room1price':'50',
+      'room1desc':'assets/images/radissonblu.jpg',
+      'room2name':'Double Masn',
+      'room2photo':'assets/images/radissonblu.jpg',
+      'room2type':' 1 queen bed',
+      'room2price':'30',
+      'room2desc':'assets/images/radissonblu.jpg',
+      'room3name':'Single',
+      'room3photo':'assets/images/radissonblu.jpg',
+      'room3type':'1 queen bed',
+      'room3price':'30',
+      'room3desc':'assets/images/radissonblu.jpg',
+    },
+
+  ];
+    HotelCarousel({Key? key, }) : super(key: key);
+
+  @override
+  State<HotelCarousel> createState() => _HotelCarouselState();
+}
+
+class _HotelCarouselState extends State<HotelCarousel> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'Exclusive Hotels',
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              GestureDetector(
+                onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const HotelTab(),),);},
+                child: Text(
+                  'See All',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+
+        Container(
+          height: 300,
+
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('hotels')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('An error occurred while loading the data.'),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (snapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: Text('No  details found.'),
+                );
+              }
+
+              return ListView(
+                scrollDirection: Axis.horizontal,
+                children: snapshot.data!.docs.map((document) {
+                  final documentId = document.get('id');
+                  final name = document.get('name');
+                  final email = document.get('email');
+                  final address = document.get('address');
+                  final price = document.get('price');
+
+                  final imageurl = document.get('imageurl');
+                  final hotelId = document.get('id'); // <-- Get the hotel ID
+                  String likeCountString = document.get('likeCount');
+                  int likeCount = int.parse(likeCountString);
+
+                  bool isLiked = document.get('isLiked') ?? false;
+
+
+
+                  final CollectionReference hotelsCollection = FirebaseFirestore.instance.collection('hotels');
+
+                  Future<void> updateLikeCount(String hotelId, int likeCount) async {
+                    await hotelsCollection.doc(hotelId).update({'likeCount': likeCount});
+                  }
+                  bool _isLoading = false;
+
+
+                  void _wishlistHotel(String hotelId, BuildContext context) async {
+                    // Set the loading state to true
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    // Get the current user's email and name
+                    final FirebaseAuth auth = FirebaseAuth.instance;
+                    final User? user = auth.currentUser;
+                    final String? email = user!.email;
+                  // final String email = user?.email ?? 'nashtunic@gmail.com';
+
+
+                    // Get the hotel data using its ID
+                    final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+                        .collection('hotels')
+                        .doc(hotelId)
+                        .get();
+
+                    // Check if the hotel is already in the user's wishlist
+                    final QuerySnapshot wishlistSnapshot = await FirebaseFirestore.instance
+                        .collection('wishlisthotels')
+                        .where('email', isEqualTo: email)
+                        .where('name', isEqualTo: snapshot['name'])
+                        .get();
+                    final isWishlisted = wishlistSnapshot.docs.isNotEmpty;
+                    if (isWishlisted) {
+                      // Hotel is already in the wishlist, show a snackbar and return
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Hotel is already in wishlist!'),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      // Set the loading state back to false
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      return;
+                    }
+
+                    // Add the hotel data to the wishlisthotels collection
+                    await FirebaseFirestore.instance.collection('wishlisthotels').add({
+                      'email': email,
+                      'name': snapshot['name'],
+                      'address': snapshot['address'],
+                      'price': snapshot['price'],
+                      'imageurl': snapshot['imageurl'],
+                      'id': document.id,
+                    });
+
+                    // Show a snackbar to the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+
+                        content: Text('Hotel added to wishlist!'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+
+                    // Set the loading state back to false
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+
+
+
+
+
+
+
+
+
+                  return GestureDetector(
+                    onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => HotelScreen(hotel: document.id),),);},
+                    // onLongPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => UploadPage(),),);},
+                    //  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => HotelScreen(hotel: hotels[index]),),);},
+                    child: Container(
+                      margin: const EdgeInsets.all(10.0),
+                      width: 300.0,
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: <Widget>[
+                          Positioned(
+                            bottom: 2.0,
+                            child: Container(
+                              height: 200.0,
+                              width: 300.0,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor.withOpacity(0.8),
+                                // color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Text(
+                                      '$name',
+                                      style: const TextStyle(
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2.0),
+                                    Text(
+                                      '$address',
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2.0),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '$price'+' '+ '\$',
+                                          style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const Text(
+                                          ' ''/night',
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  offset: Offset(0.0, 2.0),
+                                  blurRadius: 6.0,
+                                ),
+                              ],
+                            ),
+                            child:
+
+                              GestureDetector(
+                                onTap: () async {
+
+                                },
+
+                                child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image(
+                              height: 180.0,
+                              width: 320.0,
+                              image: AssetImage('$imageurl'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            top: 10.0,
+                            right: 10.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(2.0),
+                                color: Theme.of(context).primaryColor.withOpacity(0.8),
+                              ),
+
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      isLiked ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isLiked = !isLiked;
+                                        likeCount += isLiked ? 1 : -1;
+                                      });
+
+                                      await updateLikeCount(hotelId, likeCount);
+
+                                    },
+                                  ),
+
+                                  Text(
+                                    '$likeCount',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: 2.0),
+                                ],
+                              ),
+                            ),
+                          ),
+
+
+
+                            Positioned(
+                              top: 10.0,
+                              left: 10.0,
+                              child: Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                padding: EdgeInsets.all(5.0),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                         Icons.favorite ,
+                                        color: Colors.white,
+                                      ),
+                                      iconSize: 20,
+                                      onPressed: _isLoading
+                                          ? null // Disable the button while loading
+                                          : () => _wishlistHotel(document.id, context),
+
+                                    ),
+
+
+                                    if (_isLoading)
+                                      Positioned.fill(
+                                        child: Container(
+                                          color: Colors.black54.withOpacity(0.5),
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                          Positioned(
+                            top: 50.0,
+                            left: 10.0,
+                            child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance.collection('wishlisthotels')
+                                  .where('email', isEqualTo: email)
+                                  .where('id', isEqualTo: document.id)
+                                  .snapshots(),
+                              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return CircularProgressIndicator();
+                                  default:
+                                    if (snapshot.data!.docs.isNotEmpty) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(2.0),
+                                          color: Colors.white,
+                                        ),
+                                        padding: EdgeInsets.all(5.0),
+                                        child: Text(
+                                          'Wishlisted',
+                                          style: TextStyle(
+                                            color: Theme.of(context).primaryColor.withOpacity(0.8),
+                                            fontSize: 10.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                }
+                              },
+                            ),
+                          ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        ],
+                      ),
+                    ),
+
+                  )
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        ),
+
+
+
+
+
+      ],
+    );
+  }
+}
+
+
+
+
