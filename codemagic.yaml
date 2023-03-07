@@ -3,8 +3,8 @@ workflows:
     triggers:
       - event: push
         branch: master
-      - event: push
-        branch: develop
+      - event: pull_request
+        branch: "*"
     environment:
       vars:
         FLUTTER_VERSION: "2.10.3"
