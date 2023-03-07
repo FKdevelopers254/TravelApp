@@ -30,4 +30,4 @@ workflows:
           xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build -exportOptionsPlist exportOptions.plist
       # Deploy iOS app
       - name: Deploy iOS app
-        script: codemagic deploy -app your-app-id -token your-api-token -file build/Runner.ipa
+        script: codemagic deploy -a com.example.eastravel -f build/ios/iphoneos/Runner.ipa
