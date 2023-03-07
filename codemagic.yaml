@@ -7,27 +7,21 @@ workflows:
     scripts:
       - name: Install dependencies
         script: flutter pub get
-      - name: Build iOS app
-        script: flutter build ios --release
-      - name: Archive iOS app
-        script: |
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release -archivePath build/Runner.xcarchive clean archive
-      - name: Export iOS app
-        script: |
-          xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build -exportOptionsPlist exportOptions.plist
+      - name: Build iOS app for Simulator
+        script: flutter build ios --simulator --release
       - name: Deploy iOS app
         script: codemagic deploy -a com.example.eastravel -f build/ios/iphoneos/Runner.ipa
     triggering:
-       events: 
-          - push
-       branch_patterns:
-         - pattern: "*"
-         - pattern: "feature/*"
-           include: true
-         - pattern: "hotfix/*"
-           include: true
-         - pattern: "release/*"
-           include: true
-         - pattern: "master"
-           include: true
-       cancel_previous_builds: true
+      events:
+        - push
+      branch_patterns:
+        - pattern: "*"
+        - pattern: "feature/*"
+          include: true
+        - pattern: "hotfix/*"
+          include: true
+        - pattern: "release/*"
+          include: true
+        - pattern: "master"
+          include: true
+      cancel_previous_builds: true
