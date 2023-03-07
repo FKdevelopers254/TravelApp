@@ -1,10 +1,5 @@
 workflows:
   ios:
-    triggers:
-      - event: push
-        branch: master
-      - event: pull_request
-        branch: "*"
     environment:
       vars:
         FLUTTER_VERSION: "2.10.3"
@@ -22,3 +17,6 @@ workflows:
           xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build -exportOptionsPlist exportOptions.plist
       - name: Deploy iOS app
         script: codemagic deploy -a com.example.eastravel -f build/ios/iphoneos/Runner.ipa
+    triggers:
+      - event: push
+        branch: master
