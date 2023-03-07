@@ -1,33 +1,24 @@
-# Workflow name
 workflows:
   ios:
-    # Trigger build on every commit to the specified branches
     triggers:
       - event: push
         branch: master
       - event: push
         branch: develop
-    # Define the build steps
     environment:
-      # Set environment variables
-      # Replace with your own values
-      XCODE_VERSION: "13.2"
-      FLUTTER_VERSION: "2.10.3"
+      vars:
+        FLUTTER_VERSION: "2.10.3"
+        XCODE_VERSION: "13.2"
     scripts:
-      # Install dependencies
       - name: Install dependencies
         script: flutter pub get
-      # Build iOS app
       - name: Build iOS app
         script: flutter build ios --release
-      # Archive iOS app
       - name: Archive iOS app
         script: |
           xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release -archivePath build/Runner.xcarchive clean archive
-      # Export iOS app
       - name: Export iOS app
         script: |
           xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build -exportOptionsPlist exportOptions.plist
-      # Deploy iOS app
       - name: Deploy iOS app
         script: codemagic deploy -a com.example.eastravel -f build/ios/iphoneos/Runner.ipa
