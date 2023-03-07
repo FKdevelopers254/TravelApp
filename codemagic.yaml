@@ -17,16 +17,17 @@ workflows:
           xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build -exportOptionsPlist exportOptions.plist
       - name: Deploy iOS app
         script: codemagic deploy -a com.example.eastravel -f build/ios/iphoneos/Runner.ipa
-    triggers:
-      - event: push
-        branch_patterns:
-          - pattern: "*"
-          - pattern: "feature/*"
-            include: true
-          - pattern: "hotfix/*"
-            include: true
-          - pattern: "release/*"
-            include: true
-          - pattern: "master"
-            include: true
-        cancel_previous_builds: true
+    triggering:
+       events: 
+          - push
+       branch_patterns:
+         - pattern: "*"
+         - pattern: "feature/*"
+           include: true
+         - pattern: "hotfix/*"
+           include: true
+         - pattern: "release/*"
+           include: true
+         - pattern: "master"
+           include: true
+       cancel_previous_builds: true
