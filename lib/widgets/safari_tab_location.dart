@@ -4,6 +4,7 @@ import 'package:eastravel/widgets/safari_tab_type.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -46,6 +47,446 @@ class _SafariTabLocationState extends State<SafariTabLocation> {
   }
 
 
+  Widget _buildGridView(){
+    return GridView.builder(
+      itemCount: _filteredSafaris.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 2 / 2,
+        mainAxisSpacing: 2,
+        crossAxisSpacing: 10,
+      ),
+      itemBuilder: (context, index) => _buildItem(index),
+    );
+  }
+
+  Widget _buildListView(){
+    return ListView.builder(
+      itemCount: _filteredSafaris.length,
+
+      itemBuilder: (context, index) => _buildItem(index),
+    );
+
+  }
+
+  Widget _buildItem(int index) {
+    final safari = _filteredSafaris[index];
+
+    final hotelId = safari.id;
+    final user = FirebaseAuth.instance.currentUser;
+
+
+
+
+
+
+    bool _isLoading = false;
+
+    void _wishlistHotel(String hotelId, BuildContext context) async {
+      // Set the loading state to true
+      setState(() {
+        _isLoading = true;
+      });
+      // Get the current user's email and name
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final String? email = user!.email;
+      // final String email = user?.email ?? 'nashtunic@gmail.com';
+
+
+      // Get the hotel data using its ID
+      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('safaris')
+          .doc(hotelId)
+          .get();
+
+      // Check if the hotel is already in the user's wishlist
+      final QuerySnapshot wishlistSnapshot = await FirebaseFirestore.instance
+          .collection('wishlistsafaris')
+          .where('email', isEqualTo: email)
+          .where('name', isEqualTo: snapshot['name'])
+          .get();
+      final isWishlisted = wishlistSnapshot.docs.isNotEmpty;
+      if (isWishlisted) {
+        // Hotel is already in the wishlist, show a snackbar and return
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Safari is already in wishlist!'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        // Set the loading state back to false
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Add the hotel data to the wishlisthotels collection
+      await FirebaseFirestore.instance.collection('wishlistsafaris').add({
+        'email': email,
+        'name': snapshot['name'],
+        'address': snapshot['address'],
+        'price': snapshot['price'],
+        'imageurl': snapshot['imageUrl'],
+        'id': hotelId,
+      });
+
+      // Show a snackbar to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+
+          content: Text('Safari added to wishlist!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Set the loading state back to false
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    return InkWell(
+
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SafariDetailScreen(safari),
+            ),
+          );
+        },
+        //  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => SafariScreen(safari: _filteredItems[index]),),);},
+        child: Container(
+          margin: const EdgeInsets.only(top: 5.0,bottom: 5.0),
+
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(0.0, 2.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
+                ),
+                child: Hero(
+                  tag: safari['imageUrl'],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image(
+                      height: 180.0,
+                      width: 180.0,
+                      image: AssetImage(safari['imageUrl']),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 24,
+                left: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+
+
+                  child: Wrap(
+                    children: [
+                      Text(
+                        safari['name'],
+                        style: GoogleFonts.bebasNeue(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 48,
+                left: 5,
+                child: RatingBar.builder(
+                  initialRating: 2.5,
+                  itemSize: 17,
+                  minRating: 0,
+                  maxRating: 5,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) async {
+                    final FirebaseAuth auth = FirebaseAuth.instance;
+                    final User? user = auth.currentUser;
+                    final String? email = user!.email;
+
+                    final DocumentReference hotelRef = FirebaseFirestore.instance
+                        .collection('hotels')
+                        .doc(hotelId);
+
+                    final QuerySnapshot ratingSnapshot = await FirebaseFirestore.instance
+                        .collection('ratinghotel')
+                        .where('hotelId', isEqualTo: hotelId)
+                        .where('email', isEqualTo: email)
+                        .get();
+
+                    final bool isRated = ratingSnapshot.docs.isNotEmpty;
+
+                    if (isRated) {
+                      // Update the existing rating document
+                      ratingSnapshot.docs.first.reference.update({'rating': rating});
+                    } else {
+                      // Create a new rating document
+                      await FirebaseFirestore.instance.collection('ratinghotel').add({
+                        'email': email,
+                        'hotelId': hotelId,
+                        'rating': rating,
+                      });
+                    }
+
+                    // Update the hotel rating
+                    final QuerySnapshot ratings = await FirebaseFirestore.instance
+                        .collection('ratinghotel')
+                        .where('hotelId', isEqualTo: hotelId)
+                        .get();
+
+                    final int numRatings = ratings.docs.length;
+                    final double totalRating = ratings.docs.fold(0, (acc, doc) => acc + doc['rating']);
+                    final double newRating = totalRating / numRatings;
+
+                    await hotelRef.update({'rating': newRating});
+                  },
+
+                ),
+              ),
+              Positioned(
+                bottom: 5,
+                left: 5,
+                child: Container(
+
+
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+
+
+                  child: Wrap(
+
+                    children: [
+                      Text(
+                        safari['hotelname'],
+                        style: GoogleFonts.bebasNeue(
+                          color: Theme.of(context).primaryColor.withOpacity(0.8),
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          // letterSpacing: 1.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 5,
+                right: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+
+
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+
+                            Text(
+                              '${safari['price'].toString()} \$',
+                              style: GoogleFonts.bebasNeue(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 30,
+                right: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+
+
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.date_range,size: 15,),
+                                Text(
+                                  safari['days'].toString(),
+                                  style: GoogleFonts.bebasNeue(
+                                    color: Theme.of(context).primaryColor.withOpacity(0.8),
+
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+
+
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+
+
+
+              Positioned(
+                top: 10.0,
+                left: 10.0,
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('wishlistsafaris')
+                      .where('email', isEqualTo: user!.email)
+                      .where('id', isEqualTo: hotelId)
+                      .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return CircularProgressIndicator();
+                      default:
+                        if (snapshot.data!.docs.isNotEmpty) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2.0),
+                              color: Colors.white,
+                            ),
+
+                            child: Text(
+                              'Wishlisted',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor.withOpacity(0.8),
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            height: 30,
+
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+
+                            child: Row(
+                              children: [
+                                IconButton(
+
+
+                                  icon: Icon(
+
+
+                                    Icons.favorite ,
+                                    color: Colors.white,
+                                  ),
+                                  iconSize: 20,
+
+                                  onPressed: _isLoading
+                                      ? null // Disable the button while loading
+                                      : () => _wishlistHotel(hotelId, context),
+
+                                ),
+
+
+                                if (_isLoading)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Theme.of(context).primaryColor.withOpacity(0.5),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+
+                              ],
+                            ),
+                          );
+                        }
+                    }
+                  },
+                ),
+              ),
+
+
+
+            ],
+          ),
+        )
+
+
+    );
+  }
+  bool _isGridView = true;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +495,7 @@ class _SafariTabLocationState extends State<SafariTabLocation> {
         title: TextField(
           controller: _searchController,
           decoration: const InputDecoration(
-            hintText: "Type Safari Name",
+            hintText: "Type Safari Location",
             hintStyle: TextStyle(color: Colors.white,),
             border: InputBorder.none,
           ),
@@ -62,7 +503,7 @@ class _SafariTabLocationState extends State<SafariTabLocation> {
             setState(() {
               _searchText = value;
               _filteredSafaris = _safaris.where((safari) {
-                final name = safari['name'] as String;
+                final name = safari['address'] as String;
                 final hotelname = safari['hotelname'] as String;
                 final searchText = _searchText.toLowerCase();
                 return name.toLowerCase().contains(searchText) ||
@@ -76,110 +517,15 @@ class _SafariTabLocationState extends State<SafariTabLocation> {
 
         ),
         actions: [
-          ElevatedButton(
+          MaterialButton(
+            onPressed: () {
+              setState(() {
+                _isGridView = !_isGridView;
+              });
+            },
+            child: Icon(_isGridView ? Icons.view_list : Icons.view_module),
 
-              onPressed: (){
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context){
-                      return Container(
-                        height: 180,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF3EBACE),
-                          //  image: DecorationImage(image: AssetImage('lib/assets/images/olesereni.jpg')),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                          ),
-                        ),
-                        child: Container(
-
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF3EBACE),
-                            //image: DecorationImage(image: AssetImage('lib/assets/images/olesereni.jpg')),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10.0,
-                                spreadRadius: 0.0,
-                                offset: Offset(0.0, -2.0),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children:  [
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child:
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-
-                                      onPressed: (){
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder:  (context) => const SafariTabLocation()
-                                            ));
-                                      },
-                                      child: Row(
-                                        children: const [
-                                          Icon(Icons.local_airport),
-                                          Text(
-                                            'Location',style: TextStyle(fontSize: 20),),
-                                        ],
-                                      ),),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-
-                                      onPressed: (){
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder:  (context) => const SafariTabType()
-                                            ));
-                                      },
-                                      child: Row(
-                                        children: const [
-                                          Icon(Icons.local_atm),
-                                          Text(
-                                            'Price',style: TextStyle(fontSize: 20),),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                      );
-                    }
-                );
-              },
-              child: Row(
-
-                children:  [
-
-                  Text('Search by',style: TextStyle(color: Theme.of(context).primaryColor.withOpacity(0.8), ),),
-                  Icon(Icons.arrow_circle_down,color: Theme.of(context).primaryColor.withOpacity(0.8),),
-                ],
-              ))
+          )
 
         ],
 
@@ -187,390 +533,19 @@ class _SafariTabLocationState extends State<SafariTabLocation> {
       ),
       body:_filteredSafaris.isEmpty
           ? Center(child: CircularProgressIndicator())
-          : GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 2/2,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 10,
-
-        ),
-        padding: const EdgeInsets.all(8),
-
-        itemCount: _filteredSafaris.length,
-        itemBuilder: (BuildContext content,int index){
-          final safari = _filteredSafaris[index];
-
-          final hotelId = safari.id;
-          final user = FirebaseAuth.instance.currentUser;
-
-
-
-
-
-
-          bool _isLoading = false;
-
-          void _wishlistHotel(String hotelId, BuildContext context) async {
-            // Set the loading state to true
-            setState(() {
-              _isLoading = true;
-            });
-            // Get the current user's email and name
-            final FirebaseAuth auth = FirebaseAuth.instance;
-            final User? user = auth.currentUser;
-            final String? email = user!.email;
-            // final String email = user?.email ?? 'nashtunic@gmail.com';
-
-
-            // Get the hotel data using its ID
-            final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-                .collection('safaris')
-                .doc(hotelId)
-                .get();
-
-            // Check if the hotel is already in the user's wishlist
-            final QuerySnapshot wishlistSnapshot = await FirebaseFirestore.instance
-                .collection('wishlistsafaris')
-                .where('email', isEqualTo: email)
-                .where('name', isEqualTo: snapshot['name'])
-                .get();
-            final isWishlisted = wishlistSnapshot.docs.isNotEmpty;
-            if (isWishlisted) {
-              // Hotel is already in the wishlist, show a snackbar and return
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Hotel is already in wishlist!'),
-                  backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
-                ),
-              );
-              // Set the loading state back to false
-              setState(() {
-                _isLoading = false;
-              });
-              return;
-            }
-
-            // Add the hotel data to the wishlisthotels collection
-            await FirebaseFirestore.instance.collection('wishlistsafaris').add({
-              'email': email,
-              'name': snapshot['name'],
-              'address': snapshot['address'],
-              'price': snapshot['price'],
-              'imageurl': snapshot['imageurl'],
-              'id': hotelId,
-            });
-
-            // Show a snackbar to the user
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-
-                content: Text('Hotel added to wishlist!'),
-                backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
-              ),
-            );
-
-            // Set the loading state back to false
-            setState(() {
-              _isLoading = false;
-            });
-          }
-
-
-          return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SafariDetailScreen(safari),
-                  ),
-                );
-              },
-              //  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => SafariScreen(safari: _filteredItems[index]),),);},
-              child: Container(
-                margin: const EdgeInsets.only(top: 5.0,bottom: 5.0),
-
-                child: Stack(
-                  alignment: Alignment.topCenter,
-                  children: <Widget>[
-
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(0.0, 2.0),
-                            blurRadius: 6.0,
-                          ),
-                        ],
-                      ),
-                      child: Hero(
-                        tag: safari['imageUrl'],
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            height: 180.0,
-                            width: 180.0,
-                            image: AssetImage(safari['imageUrl']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 35,
-                      left: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-
-
-                        child: Wrap(
-                          children: [
-                            Text(
-                              safari['name'],
-                              style: GoogleFonts.bebasNeue(
-                                color: Colors.white,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 1.2,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 5,
-                      left: 5,
-                      child: Container(
-
-
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-
-
-                        child: Wrap(
-
-                          children: [
-                            Text(
-                              safari['hotelname'],
-                              style: GoogleFonts.bebasNeue(
-                                color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                // letterSpacing: 1.2,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 5,
-                      right: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-
-
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-
-                                  Text(
-                                    '${safari['price'].toString()} \$',
-                                    style: GoogleFonts.bebasNeue(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 30,
-                      right: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-
-
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.date_range,size: 15,),
-                                      Text(
-                                        safari['days'].toString(),
-                                        style: GoogleFonts.bebasNeue(
-                                          color: Theme.of(context).primaryColor.withOpacity(0.8),
-
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-
-
-
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-
-                    Positioned(
-                      top: 10.0,
-                      left: 10.0,
-                      child: Container(
-                        height: 30,
-
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-
-                        child: Row(
-                          children: [
-                            IconButton(
-
-
-                              icon: Icon(
-
-
-                                Icons.favorite ,
-                                color: Colors.white,
-                              ),
-                              iconSize: 20,
-
-                              onPressed: _isLoading
-                                  ? null // Disable the button while loading
-                                  : () => _wishlistHotel(hotelId, context),
-
-                            ),
-
-
-                            if (_isLoading)
-                              Positioned.fill(
-                                child: Container(
-                                  color: Theme.of(context).primaryColor.withOpacity(0.5),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Positioned(
-                      top: 50.0,
-                      left: 10.0,
-                      child: StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance.collection('wishlistsafaris')
-                            .where('email', isEqualTo: user!.email)
-                            .where('id', isEqualTo: hotelId)
-                            .snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return CircularProgressIndicator();
-                            default:
-                              if (snapshot.data!.docs.isNotEmpty) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(2.0),
-                                    color: Colors.white,
-                                  ),
-
-                                  child: Text(
-                                    'Wishlisted',
-                                    style: TextStyle(
-                                      color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                      fontSize: 10.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Container();
-                              }
-                          }
-                        },
-                      ),
-                    ),
-
-
-
-                  ],
-                ),
-              )
-
-
-          );
-        },
-
-
-      ),
+          : _isGridView ? _buildGridView() : _buildListView(),
 
     );
   }
 }
 
 
-
 class SafariDetailScreen extends StatelessWidget {
   final DocumentSnapshot documentt;
 
   bool isLoading = false;
+
+
   SafariDetailScreen(this.documentt);
   final _formKey = GlobalKey<FormState>();
   late String _title;
@@ -590,19 +565,23 @@ class SafariDetailScreen extends StatelessWidget {
 
     final url = Uri.https('markiniltd.com', '/add.php');
     final response = await http.post(url,
-        body: {'title': _title, 'description': _description});
+        body: {'title':  'imageUrl', 'description': _description});
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
       if (responseBody['status'] == 'success') {
+
+
+
         print('Succesfull');
+
       }
 
       else {
         print('Error');
       }
     } else {
-      print('Error');
+      print('Loading');
     }
   }
 
@@ -618,10 +597,20 @@ class SafariDetailScreen extends StatelessWidget {
     return Text(stars);
   }
 
+  void deleteSafari(String hotelId) {
+    FirebaseFirestore.instance
+        .collection('wishlistsafaris')
+        .doc(hotelId)
+        .delete()
+        .then((value) => print('Safari deleted'))
+        .catchError((error) => print('Failed to delete Safari: $error'));
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DefaultTabController(
+      body:  DefaultTabController(
         length: 1,
         child: CustomScrollView(
 
@@ -648,9 +637,7 @@ class SafariDetailScreen extends StatelessWidget {
                 title:  AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(documentt['name'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
-                    TypewriterAnimatedText(documentt['hotelname'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
-                    TypewriterAnimatedText(documentt['location'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
-                    TypewriterAnimatedText(documentt['price'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
+                    TypewriterAnimatedText(documentt['price'].toString(),textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
 
 
                   ],
@@ -685,13 +672,13 @@ class SafariDetailScreen extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                        top: 30,
+                        top: 50,
                         right: 20  ,
                         child: ElevatedButton(
 
                             child: Row(
                               children: [
-                                Text('\$'+ documentt['price'],style: const TextStyle(fontSize: 20),),
+                                Text( documentt['price'].toString(),style: const TextStyle(fontSize: 25),),
 
 
 
@@ -699,10 +686,11 @@ class SafariDetailScreen extends StatelessWidget {
                               ],
                             ),
 
+
                             onPressed: (){}
 
                         )),
-                    const Positioned(
+                    Positioned(
                       bottom: 10,
                       right: 10,
                       child: Text(
@@ -721,186 +709,6 @@ class SafariDetailScreen extends StatelessWidget {
               delegate: SliverChildListDelegate(
                 <Widget>[
 
-                  Wrap(
-                    children: [
-
-                      Container(
-
-                        child: ExpansionTile(
-                          title: const Text('Amenities'),
-
-                          children: [
-                            Column(
-                              children: [
-                                Row(
-                                  children: <Widget>[
-
-
-
-                                    ElevatedButton(
-                                      onPressed: (){},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            FontAwesomeIcons.wifi,
-                                            size: 21.0,
-                                            color: Colors.green,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          Text(
-                                            'Wifi',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                    ),
-                                    ElevatedButton(
-
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.spa,
-                                          size: 21.0,
-                                          color: Colors.red,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Spa',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.swimmingPool,
-                                          size: 21.0,
-                                          color: Colors.green,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Pool',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.wineBottle,
-                                          size: 21.0,
-                                          color: Colors.green,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Bar',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: <Widget>[
-
-
-
-                                    ElevatedButton(
-                                      onPressed: (){},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            FontAwesomeIcons.windows,
-                                            size: 21.0,
-                                            color: Colors.green,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          Text(
-                                            'Balcony',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.parking,
-                                          size: 21.0,
-                                          color: Colors.green,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Parking',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.wineGlassAlt,
-                                          size: 21.0,
-                                          color: Colors.red,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Restaurant',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        )
-
-                                      ],
-                                    ),
-
-                                    ),
-
-                                  ],
-                                ),
-                                const SizedBox(height: 30,),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                  ),
 
                   Wrap(
                     children: [
@@ -1186,7 +994,7 @@ class SafariDetailScreen extends StatelessWidget {
                                   Column(
                                     children: <Widget>[
                                       Text(
-                                        documentt['price'] + '\$',
+                                        documentt['price'].toString() + '\$',
                                         style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.w600,
@@ -1269,11 +1077,12 @@ class SafariDetailScreen extends StatelessWidget {
                               ),
 
                               const SizedBox(height: 10.0),
+
                               Row(
                                 children: <Widget>[
                                   Container(
                                     padding: const EdgeInsets.all(5.0),
-                                    width: 110.0,
+                                    width: 100.0,
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).primaryColor.withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(10.0),
@@ -1283,52 +1092,84 @@ class SafariDetailScreen extends StatelessWidget {
 
                                       onTap: () {
                                         showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: Column(
-                                                  children: [
-                                                    Text('Safari Booking'),
-                                                    Text(documentt['name']),
-                                                  ],
-                                                ),
-                                                content: Padding(
-                                                  padding: const EdgeInsets.all(16.0),
-                                                  child: Form(
-                                                    key: _formKey,
-                                                    child: Wrap(
-                                                      children: [
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Column(
+                                                children: [
+                                                  Text('Room Booking'),
+                                                  Text(documentt['name']),
+                                                  Text(documentt['price'].toString()),
+                                                ],
+                                              ),
+                                              content: Padding(
+                                                padding: const EdgeInsets.all(16.0),
+                                                child: Form(
+                                                  key: _formKey,
+                                                  child: Wrap(
+                                                    children: [
+                                                      TextFormField(
+                                                        decoration: InputDecoration(labelText: 'Contact Number'),
+                                                        onSaved: (value) => _title = value!,
+                                                      ),
+                                                      SizedBox(height: 16.0),
+                                                      TextFormField(
+                                                        decoration: InputDecoration(labelText: 'Description'),
+                                                        onSaved: (value) => _description = value!,
+                                                      ),
+                                                      const SizedBox(height: 16.0),
+                                                      MaterialButton(
+                                                        child: Text('Submit'),
+                                                        onPressed: () async {
+                                                          _submitForm();
+                                                          // initiate cURL request to Twilio API to send SMS message
+                                                          final response = await http.post(
+                                                            Uri.parse('https://markiniltd.com/twilio.php'),
+                                                            body: {
+                                                              'to': '+254794155449', // replace with recipient phone number
+                                                              'message': 'Safari name: ${documentt["name"]},Safari Price: ${documentt['price'].toString()},$_title: $_description,', // use the title and description as the message body
+                                                            },
+                                                          );
+                                                          print(response.body);
 
-                                                        TextFormField(
-                                                          decoration: InputDecoration(labelText: 'Email'),
+                                                          Navigator.of(context).pop();
 
-                                                          onSaved: (value) => _title = value!,
-                                                        ),
-                                                        SizedBox(height: 16.0),
-                                                        TextFormField(
-                                                          decoration: InputDecoration(labelText: 'Description'),
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                            SnackBar(
+                                                              backgroundColor: Colors.green,
+                                                              content: Text('Message sent successfully'),
+                                                              duration: Duration(seconds: 3),
+                                                            ),
+                                                          );
 
-                                                          onSaved: (value) => _description = value!,
-                                                        ),
-                                                        const SizedBox(height: 16.0),
-                                                        MaterialButton(
-                                                          color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                                          child: Text('Submit'),
-                                                          onPressed: _submitForm,
-                                                        ),
-                                                      ],
-                                                    ),
+
+
+                                                        },
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                actions: const [
+                                              ),
+                                              actions:  [
 
-                                                ],
-                                              );
-                                            });
+                                                ElevatedButton(
+                                                  child: Text('Close'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+
+                                              ],
+                                            );
+                                          },
+                                        );
+
+
+
                                       },
                                       child: const Text(
-                                        'Book Now',
-                                        maxLines: 2,),
+                                        'Contact Now',
+                                        maxLines: 1,),
                                     ),
                                   ),
 
@@ -1356,6 +1197,7 @@ class SafariDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+
 
 
                   Padding(
@@ -1432,7 +1274,94 @@ class SafariDetailScreen extends StatelessWidget {
 
                     ],
                   ),
+                  ExpansionTile(
+                    title: Text('Days',style:GoogleFonts.poppins(color:Colors.black,fontWeight: FontWeight.w500),),
 
+                    children: [
+
+                      FutureBuilder<QuerySnapshot>(
+                        future: FirebaseFirestore.instance.collection('safaridays').where('email', isEqualTo: documentt['email']).get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          final roomDocs = snapshot.data!.docs;
+                          if (roomDocs.isEmpty) {
+                            return Text('No days found for this Safari'+ documentt['id']);
+                          }
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: roomDocs.length,
+                            itemBuilder: (context, index) {
+                              final roomDoc = roomDocs[index];
+
+                              return Stack(
+                                children: <Widget>[
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(40.0, 5.0, 20.0, 5.0),
+
+
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
+                                      child: Column(
+
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Wrap(
+                                            children: [
+                                              Text(
+                                                roomDoc['dayname'],
+                                                style:  GoogleFonts.abrilFatface(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 4,
+                                              ),
+                                            ],
+                                          ),
+
+                                          Wrap(
+                                            children: [
+                                              const Icon(Icons.hotel,size: 15,),
+                                              Text(
+                                                roomDoc['desc'],
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 12
+
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 60,
+                                              ),
+                                            ],
+                                          ),
+
+                                          const SizedBox(height: 10.0),
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+
+
+
+                    ],),
 
 
 
@@ -1452,6 +1381,7 @@ class SafariDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
 }

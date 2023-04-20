@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import '../models/car_model.dart';
 import '../screens/car_screen.dart';
 import 'car_tab.dart';
+import 'cardata.dart';
 
 
 class CarCarousel extends StatefulWidget {
@@ -194,13 +196,13 @@ class _CarCarouselState extends State<CarCarousel> {
               const Text(
                 'Car Rentals',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 17.0,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
                 ),
               ),
               GestureDetector(
-                onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => CarTab(),),);},
+                onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => CarP(),),);},
                 child: Text(
                   'See All',
                   style: TextStyle(
@@ -216,7 +218,7 @@ class _CarCarouselState extends State<CarCarousel> {
         ),
 
         Container(
-          height: 300,
+          height: 200,
 
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -527,51 +529,10 @@ class _CarCarouselState extends State<CarCarousel> {
 
 
 
+
+
                                 Positioned(
                                   top: 10.0,
-                                  right: 10.0,
-                                  child: Container(
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                    padding: EdgeInsets.all(5.0),
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.favorite ,
-                                            color: Colors.white,
-                                          ),
-                                          iconSize: 20,
-                                          onPressed: _isLoading
-                                              ? null // Disable the button while loading
-                                              : () => _wishlistCar(document.id, context),
-
-                                        ),
-
-
-                                        if (_isLoading)
-                                          Positioned.fill(
-                                            child: Container(
-                                              color: Colors.black54.withOpacity(0.5),
-                                              child: Center(
-                                                child: CircularProgressIndicator(
-                                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                                Positioned(
-                                  top: 50.0,
                                   right: 10.0,
                                   child: StreamBuilder<QuerySnapshot>(
                                     stream: FirebaseFirestore.instance.collection('wishlistcars')
@@ -604,7 +565,35 @@ class _CarCarouselState extends State<CarCarousel> {
                                               ),
                                             );
                                           } else {
-                                            return Container();
+                                            return Container(
+                                              height: 70,
+
+                                              padding: EdgeInsets.all(5.0),
+                                              child: Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    child: Lottie.asset('assets/icons/like.json',height: 350),
+                                                    onTap: _isLoading
+                                                        ? null // Disable the button while loading
+                                                        : () => _wishlistCar(document.id, context),),
+
+
+                                                  if (_isLoading)
+                                                    Positioned.fill(
+                                                      child: Container(
+                                                        color: Colors.black54.withOpacity(0.5),
+                                                        child: Center(
+                                                          child: CircularProgressIndicator(
+                                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
+
+                                                ],
+                                              ),
+                                            );
                                           }
                                       }
                                     },

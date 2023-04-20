@@ -43,12 +43,12 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
 
-    showDialog(context: context, builder: (context){
-      return const Center(child: CircularProgressIndicator());
+    //showDialog(context: context, builder: (context){
+    //  return const Center(child: CircularProgressIndicator());
 
-    },
-    );
-    Navigator.of(context).pop();
+   // },
+   // );
+   // Navigator.of(context).pop();
 
 
 
@@ -98,12 +98,12 @@ class _LoginPageState extends State<LoginPage> {
 
                   ],
                 ),
-                SizedBox(height: 10,),
-                const Text('"We Care About your Business"',
+                const SizedBox(height: 10,),
+                const Text('We Care About your Business',
                   style: TextStyle(
                     fontSize: 20,
                   ),),
-                SizedBox(height: 50,),
+                const SizedBox(height: 50,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -120,11 +120,11 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
 
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
+                              borderSide: const BorderSide(color: Colors.white),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.deepPurple),
+                              borderSide: const BorderSide(color: Colors.deepPurple),
                               borderRadius: BorderRadius.circular(12),
                             ),
 
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(

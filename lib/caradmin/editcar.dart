@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+
+
 class EditCarPage extends StatefulWidget {
   final String docId;
+
 
   EditCarPage({required this.docId});
 
@@ -133,8 +137,10 @@ class _EditCarPageState extends State<EditCarPage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Car'),
@@ -146,10 +152,14 @@ class _EditCarPageState extends State<EditCarPage> {
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _nameController,
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: 'Name',
                     ),
                     validator: (value) {
@@ -159,10 +169,13 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _addressController,
                     decoration: InputDecoration(
                       labelText: 'City',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -171,11 +184,16 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
+
 
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: _priceController,
                     decoration: InputDecoration(
                       labelText: 'Price',
+                      border: OutlineInputBorder(),
+
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -188,10 +206,13 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: _modelyearController,
                     decoration: InputDecoration(
                       labelText: 'Model year',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -201,11 +222,14 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
 
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _geartypeController,
                     decoration: InputDecoration(
                       labelText: 'Gear Type',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -215,10 +239,13 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _typeController,
                     decoration: InputDecoration(
                       labelText: 'Vehicle Type',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -228,11 +255,14 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
 
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: _doorsController,
                     decoration: InputDecoration(
                       labelText: 'Doors',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -245,10 +275,14 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _engineController,
                     decoration: InputDecoration(
+
                       labelText: 'Engine Fuel',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -258,11 +292,14 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
 
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: _passController,
                     decoration: InputDecoration(
                       labelText: 'Passengers',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -275,10 +312,13 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: _luggageController,
                     decoration: InputDecoration(
                       labelText: 'Luggage',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -291,6 +331,7 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
 
 
 
@@ -300,9 +341,11 @@ class _EditCarPageState extends State<EditCarPage> {
 
 
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _descriptionController,
                     decoration: InputDecoration(
                       labelText: 'Description',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -311,10 +354,16 @@ class _EditCarPageState extends State<EditCarPage> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 16),
+
+
+
                   TextFormField(
+                    keyboardType: TextInputType.text,
                     controller: _imageurlController,
                     decoration: InputDecoration(
                       labelText: 'Image',
+                      border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {

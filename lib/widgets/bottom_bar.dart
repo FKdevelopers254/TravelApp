@@ -4,9 +4,12 @@ import 'package:eastravel/widgets/safaridata.dart';
 import 'package:eastravel/widgets/workingdata.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/accountingpage.dart';
+import '../screens/accountingpagegeneral.dart';
 import '../screens/home_screen.dart';
 import '../screens/profilescreen.dart';
 
+import '../templates/tabpage.dart';
 import 'car_tab.dart';
 
 import 'cardata.dart';
@@ -113,7 +116,10 @@ class _BottomBarState extends State<BottomBar> {
         break;
 
       default:
-        widget = const HomeP();
+       // widget = const TabPage();
+        widget =  MainAccount();
+       // widget = const AccountingPage();
+       // widget = const HomeP();
         break;
     }
     return widget;

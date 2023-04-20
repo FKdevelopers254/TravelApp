@@ -12,10 +12,18 @@ import 'online/bottom_bar.dart';
 import 'widgets/mainpage.dart';
 
 
+import 'package:camera/camera.dart';
+
+
+
+List<CameraDescription> cameras = [];
+
+
 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  cameras = await availableCameras();
   runApp( MyApp());
 }
 

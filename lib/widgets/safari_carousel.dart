@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eastravel/widgets/safari_tab.dart';
+import 'package:eastravel/widgets/safaridata.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import '../screens/destination_screen.dart';
 import '../screens/hotel_screen.dart';
@@ -12,102 +14,7 @@ import '../screens/test.dart';
 
 
 class SafariCarousel extends StatefulWidget {
-  final List<Map<String, String>> safaris = [
-    {
 
-      'imageUrl': 'assets/images/radissonblu.jpg',
-      'name': 'Kenya at a Glance',
-      'location': 'Lake Nakuru,Maasai Mara',
-      'country': 'Kenya',
-      'price': '1545',
-      'days': '5',
-      'nights': '4',
-      'hotelname': 'Flamingo Hill Lodge,Zebra Plains Mara Camp',
-      'pps': '800',
-      'sr': '12005',
-      'meals': 'FULL BOARD(ALL INCLUSIVE)',
-      'selfdriveprice': '5',
-      'description': 'Day 1 Arrival in Nairobi',
-    },
-    {
-
-      'imageUrl': 'assets/images/gondola.jpg',
-      'name': 'WINGS OVER SAFARI',
-      'location': 'Amboseli,Maasai Mara',
-      'country': 'Kenya',
-      'price': '2673',
-      'days': '6',
-      'nights': '5',
-      'hotelname': 'Kilima Safari Camp',
-      'pps': '1400',
-      'sr': '12005',
-      'meals': 'FULL BOARD(ALL INCLUSIVE)',
-      'selfdriveprice': '5',
-      'description': 'rdfgfdffgfdfgbvfdf',
-    },
-    {
-
-      'imageUrl': 'assets/images/murano.jpg',
-      'name': 'Glimpse of Kenya',
-      'location': 'Samburu,Maasai Mara',
-      'country': 'Nairobi,Kenya',
-      'price': '175',
-      'days': '6',
-      'nights': '5',
-      'hotelname': 'Chui Lodge',
-      'pps': '5000',
-      'sr': '12005',
-      'meals': 'FULL BOARD(ALL INCLUSIVE)',
-      'selfdriveprice': '5',
-      'description': 'rdfgfdffgfdfgbvfdf',
-    },
-    {
-
-      'imageUrl': 'assets/images/newdelhi.jpg',
-      'name': 'Kenya Flying Budget Safari',
-      'location': 'Nairobi,Kenya',
-      'country': 'Nairobi,Kenya',
-      'price': '175',
-      'days': '6',
-      'nights': '5',
-      'hotelname': 'Chui Lodge',
-      'pps': '5000',
-      'sr': '12005',
-      'meals': 'FULL BOARD(ALL INCLUSIVE)',
-      'selfdriveprice': '5',
-      'description': 'rdfgfdffgfdfgbvfdf',
-    },
-    {
-
-      'imageUrl': 'assets/images/newyork.jpg',
-      'name': 'Toyota Axio',
-      'address': 'Nairobi,Kenya',
-      'price': '540',
-      'hotelname': 'Chui Lodge',
-      'pps': '5000',
-      'sr': '12005',
-      'meals': 'FULL BOARD(ALL INCLUSIVE)',
-      'selfdriveprice': '5',
-      'description': 'Axio',
-
-    },
-    {
-
-      'imageUrl': 'assets/images/olesereni.jpg',
-      'namex': 'Toyota Axio',
-      'location': 'Nairobi,Kenya',
-      'country': 'Nairobi,Kenya',
-      'price': '175',
-      'days': '6',
-      'nights': '5',
-      'hotelname': 'Chui Lodge',
-      'pps': '5000',
-      'sr': '12005',
-      'meals': 'FULL BOARD(ALL INCLUSIVE)',
-      'selfdriveprice': '5',
-      'description': 'rdfgfdffgfdfgbvfdf',
-    },
-  ];
    SafariCarousel({Key? key}) : super(key: key);
 
   @override
@@ -127,13 +34,13 @@ class _SafariCarouselState extends State<SafariCarousel> {
               const Text(
                 'Popular Places',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
                 ),
               ),
               GestureDetector(
-                onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => SafariTab(),),);},
+                onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => SafariP(),),);},
                 // onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => SafariTab(),),);},
                 child: Text(
                   'See All',
@@ -150,7 +57,7 @@ class _SafariCarouselState extends State<SafariCarousel> {
         ),
 
         Container(
-          height: 300,
+          height: 170,
 
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -271,7 +178,7 @@ class _SafariCarouselState extends State<SafariCarousel> {
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SafariScreen(safari: document.id)),
+                        MaterialPageRoute(builder: (context) => SafariDetailScreen(document)),
                       );
                     },
                     // onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => EventSingles(safari: safaris[index]),),);},
@@ -430,51 +337,9 @@ class _SafariCarouselState extends State<SafariCarousel> {
 
 
 
-                                Positioned(
-                                  top: 40.0,
-                                  left: 10.0,
-                                  child: Container(
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                    padding: EdgeInsets.all(5.0),
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.favorite ,
-                                            color: Colors.white,
-                                          ),
-                                          iconSize: 20,
-                                          onPressed: _isLoading
-                                              ? null // Disable the button while loading
-                                              : () => _wishlistHotel(document.id, context),
-
-                                        ),
-
-
-                                        if (_isLoading)
-                                          Positioned.fill(
-                                            child: Container(
-                                              color: Colors.black54.withOpacity(0.5),
-                                              child: Center(
-                                                child: CircularProgressIndicator(
-                                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-
-                                      ],
-                                    ),
-                                  ),
-                                ),
 
                                 Positioned(
-                                  top: 80.0,
+                                  top: 50.0,
                                   left: 10.0,
                                   child: StreamBuilder<QuerySnapshot>(
                                     stream: FirebaseFirestore.instance.collection('wishlistsafaris')
@@ -507,7 +372,30 @@ class _SafariCarouselState extends State<SafariCarousel> {
                                               ),
                                             );
                                           } else {
-                                            return Container();
+                                            return Container(
+                                              height: 40,
+
+                                              padding: EdgeInsets.all(5.0),
+                                              child: Row(
+                                                children: [
+                                                  Lottie.asset('assets/icons/like.json',height: 350),
+
+
+                                                  if (_isLoading)
+                                                    Positioned.fill(
+                                                      child: Container(
+                                                        color: Colors.black54.withOpacity(0.5),
+                                                        child: Center(
+                                                          child: Lottie.asset('assets/icons/like.json',height: 350),
+                                                         // child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
+                                                        ),
+                                                      ),
+                                                    ),
+
+
+                                                ],
+                                              ),
+                                            );
                                           }
                                       }
                                     },

@@ -31,6 +31,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final _luggageController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _imageurlController = TextEditingController();
+  final _fuelconsumptionController = TextEditingController();
+  final _drivetypeController = TextEditingController();
+  final _enginecapacityController = TextEditingController();
+  final _numberofseatsController = TextEditingController();
+
+
 
 
 
@@ -51,6 +57,10 @@ class _RegisterPageState extends State<RegisterPage> {
      _luggageController.dispose();
     _descriptionController.dispose();
     _imageurlController.dispose();
+    _fuelconsumptionController.dispose();
+    _drivetypeController.dispose();
+    _enginecapacityController.dispose();
+    _numberofseatsController.dispose();
     super.dispose();
   }
 
@@ -91,6 +101,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
       final description = _descriptionController.text;
       final imageurl = _imageurlController.text;
+      final fuelconsumption = _fuelconsumptionController.text;
+      final drivetype = _drivetypeController.text;
+      final enginecapacity = _enginecapacityController.text;
+      final numberofseats = _numberofseatsController.text;
 
 
       print('User details found: ${userDetails.toString()}');
@@ -112,6 +126,11 @@ class _RegisterPageState extends State<RegisterPage> {
           'luggage': luggage,
           'description': description,
           'imageurl': imageurl,
+
+          'fuelconsumption': fuelconsumption,
+          'drivetype': drivetype,
+          'enginecapacity': enginecapacity,
+          'numberofseats': numberofseats,
           'id': docId
 
         });
@@ -191,12 +210,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                   ),
                 ),
-                SizedBox(height: 10,),
-                Text('EAS SAFARIS',
+                const SizedBox(height: 10,),
+                const Text('EAS SAFARIS',
                   style: TextStyle(
                     fontSize: 20,
                   ),),
-                SizedBox(height: 30,),
+                const SizedBox(height: 30,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -230,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
 
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -266,7 +285,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
 
 
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -299,7 +318,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
 
 
 
@@ -331,11 +350,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           filled: true,
 
                         ),
+
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -368,7 +388,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -401,7 +421,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -434,7 +454,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -467,7 +487,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -500,7 +520,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -533,7 +553,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
 
 
 
@@ -608,6 +628,151 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 SizedBox(height: 10,),
+
+
+
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: TextField(
+                        controller: _fuelconsumptionController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+
+                          hintText: 'Fuel Consumption',
+                          fillColor: Colors.grey[200],
+                          filled: true,
+
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: TextField(
+                        controller: _drivetypeController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+
+                          hintText: 'Drive Type',
+                          fillColor: Colors.grey[200],
+                          filled: true,
+
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: TextField(
+                        controller: _enginecapacityController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+
+                          hintText: 'Engine Capacity',
+                          fillColor: Colors.grey[200],
+                          filled: true,
+
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: TextField(
+                        controller: _numberofseatsController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+
+                          hintText: 'Number of seats',
+                          fillColor: Colors.grey[200],
+                          filled: true,
+
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),

@@ -1,8 +1,10 @@
 
+import 'package:eastravel/screens/profilescreen.dart';
 import 'package:eastravel/widgets/safari_tab.dart';
 import 'package:eastravel/widgets/workingdata.dart';
 import 'package:flutter/material.dart';
 
+import '../templates/tabpage.dart';
 import 'home_screen.dart';
 
 import 'car_tab.dart';
@@ -91,7 +93,7 @@ class _BottomBarOfflineState extends State<BottomBarOffline> {
     switch(index){
       case 0:
       //  widget =  CardWithImageAndTextExample();
-        widget =  HomeScreen();
+        widget =  const HomeScreen();
         break;
 
       case 1:
@@ -101,7 +103,8 @@ class _BottomBarOfflineState extends State<BottomBarOffline> {
         widget =  const CarTab();
         break;
       default:
-        widget = const SafariTab();
+        widget =  const TabPage();
+       // widget = const SafariTab();
        // widget = AddPage();
         //widget = ViewData();
        // widget = DeleteData();

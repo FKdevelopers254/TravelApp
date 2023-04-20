@@ -1,9 +1,11 @@
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 import '../safariadmin/homescreen.dart';
@@ -71,14 +73,19 @@ class _SafariPState extends State<SafariP> with SingleTickerProviderStateMixin {
                         MaterialPageRoute(builder: (context) => BottomBar()),
                       );
                     },
-                    child: Text(
-                      'Safari Booking,search by',
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 20.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText('Safari Booking',textStyle: GoogleFonts.bebasNeue(fontSize:28,color: Colors.white)),
+
+                        TyperAnimatedText('Flight Transfers',textStyle: GoogleFonts.bebasNeue(fontSize:28,color: Colors.white)),
+
+                        TyperAnimatedText('Free Cancellation',textStyle: GoogleFonts.bebasNeue(fontSize:28,color: Colors.white)),
+
+                      ],
+                      pause: const Duration(milliseconds: 3000),
+
+                      stopPauseOnTap: true,
+                      repeatForever: true,
                     ),
                   ),
                   GestureDetector(

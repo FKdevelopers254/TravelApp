@@ -30,6 +30,11 @@ class _SafariTabTypeState extends State<SafariTabType> {
 
 
 
+  RangeValues _selectedPriceRange = const RangeValues(0.0, 1000.0);
+
+
+
+
 
   @override
   void initState() {
@@ -50,136 +55,43 @@ class _SafariTabTypeState extends State<SafariTabType> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
-        title: TextField(
-          controller: _searchController,
-          decoration: const InputDecoration(
-            hintText: "Type Safari Name",
-            hintStyle: TextStyle(color: Colors.white,),
-            border: InputBorder.none,
-          ),
-          onChanged: (value) {
-            setState(() {
-              _searchText = value;
-              _filteredSafaris = _safaris.where((safari) {
-                final name = safari['name'] as String;
-                final hotelname = safari['hotelname'] as String;
-                final searchText = _searchText.toLowerCase();
-                return name.toLowerCase().contains(searchText) ||
-                    hotelname.toLowerCase().contains(searchText);
-              }).toList();
-            });
-          },
 
-
-
-
-        ),
         actions: [
-          ElevatedButton(
 
-              onPressed: (){
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context){
-                      return Container(
-                        height: 180,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF3EBACE),
-                          //  image: DecorationImage(image: AssetImage('lib/assets/images/olesereni.jpg')),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                          ),
-                        ),
-                        child: Container(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF3EBACE),
-                            //image: DecorationImage(image: AssetImage('lib/assets/images/olesereni.jpg')),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10.0,
-                                spreadRadius: 0.0,
-                                offset: Offset(0.0, -2.0),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children:  [
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child:
+            children: [
+              Text('${_selectedPriceRange.start.toStringAsFixed(2)}',style: TextStyle(fontWeight: FontWeight.bold),),
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
 
-                                      onPressed: (){
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder:  (context) => const SafariTabLocation()
-                                            ));
-                                      },
-                                      child: Row(
-                                        children: const [
-                                          Icon(Icons.local_airport),
-                                          Text(
-                                            'Location',style: TextStyle(fontSize: 20),),
-                                        ],
-                                      ),),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
+              RangeSlider(
+                values: _selectedPriceRange,
+                min: 0.0,
+                max: 1000.0,
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _selectedPriceRange = values;
+                    _filteredSafaris = _safaris.where((safari) {
+                      final price = safari['price'].toDouble();
+                      return price >= _selectedPriceRange.start && price <= _selectedPriceRange.end;
+                    }).toList();
+                  });
+                },
+              ),
 
-                                      onPressed: (){
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder:  (context) => const SafariTabType()
-                                            ));
-                                      },
-                                      child: Row(
-                                        children: const [
-                                          Icon(Icons.local_atm),
-                                          Text(
-                                            'Price',style: TextStyle(fontSize: 20),),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+              Text('${_selectedPriceRange.end.toStringAsFixed(2)}',style: TextStyle(fontWeight: FontWeight.bold),),
 
-                      );
-                    }
-                );
-              },
-              child: Row(
+            ],
+          ),
 
-                children:  [
 
-                  Text('Search by',style: TextStyle(color: Theme.of(context).primaryColor.withOpacity(0.8), ),),
-                  Icon(Icons.arrow_circle_down,color: Theme.of(context).primaryColor.withOpacity(0.8),),
-                ],
-              ))
+
+
+
+
 
         ],
 
@@ -322,7 +234,7 @@ class _SafariTabTypeState extends State<SafariTabType> {
                       ),
                     ),
                     Positioned(
-                      bottom: 35,
+                      bottom: 24,
                       left: 5,
                       child: Container(
                         decoration: BoxDecoration(
@@ -367,7 +279,7 @@ class _SafariTabTypeState extends State<SafariTabType> {
                               safari['hotelname'],
                               style: GoogleFonts.bebasNeue(
                                 color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                fontSize: 18.0,
+                                fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
                                 // letterSpacing: 1.2,
                               ),
@@ -461,55 +373,6 @@ class _SafariTabTypeState extends State<SafariTabType> {
                     Positioned(
                       top: 10.0,
                       left: 10.0,
-                      child: Container(
-                        height: 30,
-
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-
-                        child: Row(
-                          children: [
-                            IconButton(
-
-
-                              icon: Icon(
-
-
-                                Icons.favorite ,
-                                color: Colors.white,
-                              ),
-                              iconSize: 20,
-
-                              onPressed: _isLoading
-                                  ? null // Disable the button while loading
-                                  : () => _wishlistHotel(hotelId, context),
-
-                            ),
-
-
-                            if (_isLoading)
-                              Positioned.fill(
-                                child: Container(
-                                  color: Theme.of(context).primaryColor.withOpacity(0.5),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Positioned(
-                      top: 50.0,
-                      left: 10.0,
                       child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance.collection('wishlistsafaris')
                             .where('email', isEqualTo: user!.email)
@@ -541,7 +404,50 @@ class _SafariTabTypeState extends State<SafariTabType> {
                                   ),
                                 );
                               } else {
-                                return Container();
+                                return Container(
+                                  height: 30,
+
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor.withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+
+
+                                        icon: Icon(
+
+
+                                          Icons.favorite ,
+                                          color: Colors.white,
+                                        ),
+                                        iconSize: 20,
+
+                                        onPressed: _isLoading
+                                            ? null // Disable the button while loading
+                                            : () => _wishlistHotel(hotelId, context),
+
+                                      ),
+
+
+                                      if (_isLoading)
+                                        Positioned.fill(
+                                          child: Container(
+                                            color: Theme.of(context).primaryColor.withOpacity(0.5),
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+
+                                    ],
+                                  ),
+                                );
                               }
                           }
                         },
@@ -571,6 +477,8 @@ class SafariDetailScreen extends StatelessWidget {
   final DocumentSnapshot documentt;
 
   bool isLoading = false;
+
+
   SafariDetailScreen(this.documentt);
   final _formKey = GlobalKey<FormState>();
   late String _title;
@@ -590,19 +498,23 @@ class SafariDetailScreen extends StatelessWidget {
 
     final url = Uri.https('markiniltd.com', '/add.php');
     final response = await http.post(url,
-        body: {'title': _title, 'description': _description});
+        body: {'title':  'imageUrl', 'description': _description});
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
       if (responseBody['status'] == 'success') {
+
+
+
         print('Succesfull');
+
       }
 
       else {
         print('Error');
       }
     } else {
-      print('Error');
+      print('Loading');
     }
   }
 
@@ -621,7 +533,7 @@ class SafariDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DefaultTabController(
+      body:  DefaultTabController(
         length: 1,
         child: CustomScrollView(
 
@@ -648,9 +560,7 @@ class SafariDetailScreen extends StatelessWidget {
                 title:  AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(documentt['name'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
-                    TypewriterAnimatedText(documentt['hotelname'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
-                    TypewriterAnimatedText(documentt['location'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
-                    TypewriterAnimatedText(documentt['price'],textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
+                    TypewriterAnimatedText(documentt['price'].toString(),textStyle: GoogleFonts.bebasNeue(color: Colors.white)),
 
 
                   ],
@@ -685,13 +595,13 @@ class SafariDetailScreen extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                        top: 30,
+                        top: 50,
                         right: 20  ,
                         child: ElevatedButton(
 
                             child: Row(
                               children: [
-                                Text('\$'+ documentt['price'],style: const TextStyle(fontSize: 20),),
+                                Text( documentt['price'].toString(),style: const TextStyle(fontSize: 25),),
 
 
 
@@ -702,7 +612,7 @@ class SafariDetailScreen extends StatelessWidget {
                             onPressed: (){}
 
                         )),
-                    const Positioned(
+                    Positioned(
                       bottom: 10,
                       right: 10,
                       child: Text(
@@ -721,186 +631,6 @@ class SafariDetailScreen extends StatelessWidget {
               delegate: SliverChildListDelegate(
                 <Widget>[
 
-                  Wrap(
-                    children: [
-
-                      Container(
-
-                        child: ExpansionTile(
-                          title: const Text('Amenities'),
-
-                          children: [
-                            Column(
-                              children: [
-                                Row(
-                                  children: <Widget>[
-
-
-
-                                    ElevatedButton(
-                                      onPressed: (){},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            FontAwesomeIcons.wifi,
-                                            size: 21.0,
-                                            color: Colors.green,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          Text(
-                                            'Wifi',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                    ),
-                                    ElevatedButton(
-
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.spa,
-                                          size: 21.0,
-                                          color: Colors.red,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Spa',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.swimmingPool,
-                                          size: 21.0,
-                                          color: Colors.green,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Pool',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.wineBottle,
-                                          size: 21.0,
-                                          color: Colors.green,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Bar',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: <Widget>[
-
-
-
-                                    ElevatedButton(
-                                      onPressed: (){},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            FontAwesomeIcons.windows,
-                                            size: 21.0,
-                                            color: Colors.green,
-                                          ),
-                                          SizedBox(width: 10,),
-                                          Text(
-                                            'Balcony',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.parking,
-                                          size: 21.0,
-                                          color: Colors.green,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Parking',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: (){}, child: Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.wineGlassAlt,
-                                          size: 21.0,
-                                          color: Colors.red,
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Text(
-                                          'Restaurant',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        )
-
-                                      ],
-                                    ),
-
-                                    ),
-
-                                  ],
-                                ),
-                                const SizedBox(height: 30,),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                  ),
 
                   Wrap(
                     children: [
@@ -1186,7 +916,7 @@ class SafariDetailScreen extends StatelessWidget {
                                   Column(
                                     children: <Widget>[
                                       Text(
-                                        documentt['price'] + '\$',
+                                        documentt['price'].toString() + '\$',
                                         style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.w600,
@@ -1358,6 +1088,7 @@ class SafariDetailScreen extends StatelessWidget {
                   ),
 
 
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
@@ -1444,7 +1175,6 @@ class SafariDetailScreen extends StatelessWidget {
 
 
 
-
                   // ListTiles++
                 ],
               ),
@@ -1452,6 +1182,7 @@ class SafariDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
 }

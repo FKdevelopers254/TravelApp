@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -119,8 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
                 child: GestureDetector(
-                  //   onTap: (){FirebaseAuth.instance.signOut();},
-                    onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const MainPage()));},
+                     onTap: (){FirebaseAuth.instance.signOut();},
+                    //onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const MainPage()));},
                     child:
 
 
