@@ -11,6 +11,7 @@ But that's not all - we also offer a way for users to earn cash by listing their
 
 So whether you're looking to book your dream vacation or simply explore the world around you, our travel app has everything you need to get started.
 
-<img width="1153" alt="Untitled" src="https://github.com/FKdevelopers254/TravelApp/assets/65674370/7340f2e3-3f67-4ae4-a185-35cfeeed2f76">
+<img width="1153" alt="Untitled" src="https://github.com/FKdevelopers254/TravelApp/assets/65674370/c42ef0e9-adbb-4d94-bf33-c670a3d9ff49">
 
- 
+ ![Untitled (1)](https://github.com/FKdevelopers254/TravelApp/assets/65674370/c42ef0e9-adbb-4d94-bf33-c670a3d9ff49)
+
