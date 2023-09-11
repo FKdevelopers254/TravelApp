@@ -12,10 +12,18 @@ import 'online/bottom_bar.dart';
 import 'widgets/mainpage.dart';
 
 
+import 'package:camera/camera.dart';
+
+
+
+List<CameraDescription> cameras = [];
+
+
 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  cameras = await availableCameras();
   runApp( MyApp());
 }
 
@@ -29,7 +37,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return InternetWidget(
       offline:  FullScreenWidget(
-        child: BottomBarOffline()
+       // child: BottomBarOffline()
+        child: MainPage()
       ),
       // ignore: avoid_print
       whenOffline: () => print('No Internet'),
